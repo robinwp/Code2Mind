@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "module": "es6",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "es5",
+    "esModuleInterop": true,
+    "lib": ["es2017", "dom"],
+    "sourceMap": false,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "types": ["node","jest"]
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": ["node_modules","**/*.test.ts"]
+}
