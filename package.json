@@ -2,6 +2,7 @@
   "name": "code2mind",
   "version": "1.0.0",
   "description": "code2mind",
+  "main": "dist/code2mind.min.js",
   "repository": "git@github.com:robinwp/code2mind.git",
   "author": "robinwp <284595745@qq.com>",
   "license": "MIT",

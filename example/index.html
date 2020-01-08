@@ -29,7 +29,8 @@
       top: 20px;
       left: 20px;
       background: #FFFFFF;
-      z-index: 1000;
+      z-index: 2;
+      opacity: 0.4;
     }
 
     .content-warp {
@@ -50,20 +51,40 @@
     .svg-warp {
       width: 20000px;
       height: 20000px;
+      z-index: 0;
+    }
+
+    .util-warp {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      z-index: 1;
+    }
+
+    button {
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
 <div class="input-warp">
-  <textarea title="" id="text" placeholder="请输入"></textarea>
+  <span>use tab or two space for set childNode</span>
+  <textarea title="" id="text" placeholder="input anything"></textarea>
 </div>
-<div class="content-warp">
+<div class="util-warp">
+  <button onclick="handleMagnify()">放大</button>
+  <span id="zoomText">100%</span>
+  <button onclick="handleMinify()">缩小</button>
+</div>
+<div onmousedown="handlerDragMoveEvent(event)" class="content-warp">
   <div id="svgcontent" class="svg-warp"></div>
 </div>
-<script src="../dist/code2mind.js"></script>
+<script src="../dist/code2mind.min.js"></script>
 <script>
 const text = document.getElementById('text');
+const zoomTextEl = document.getElementById('zoomText');
 const svgcontent = document.getElementById('svgcontent');
+let timer = null;
 text.value = `哈佛学习法
 哈佛商学院的超级学习法
 \t模块学习
@@ -143,8 +164,17 @@ text.value = `哈佛学习法
 \t\t与世隔绝法
 \t\t自我鼓励法
 \t\t同伴激励法`;
+text.addEventListener('input', () => {
+  if (timer) clearTimeout(timer);
+  timer = setTimeout(() => {
+    handler(text.value);
+  }, 200);
+});
+text.addEventListener('focus', () => {
+  text.parentElement.style.opacity = '1';
+});
 text.addEventListener('blur', () => {
-  handler(text.value);
+  text.parentElement.style.opacity = '0.4';
 });
 text.addEventListener('keydown', (e) => {
   if (e.code === 'Tab') {
@@ -161,22 +191,62 @@ text.addEventListener('keyup', (e) => {
     currentEl.selectionEnd = startAt + 2;
   }
 });
-
-const height = svgcontent.offsetHeight;
-const width = svgcontent.offsetWidth;
-const px = (width - svgcontent.parentElement.offsetWidth) / 2;
-const ph = (height - svgcontent.parentElement.offsetHeight) / 2;
-svgcontent.parentElement.scrollTo(px, ph);
-
+let zoom = 1;
 const codemind = new Code2Mind({
-  el: '#svgcontent'
+  el: '#svgcontent',
 });
-codemind.render(text.value);
+handler(text.value);
 
 function handler (value) {
-  if (value) {
-    codemind.render(value);
+  codemind.render(value);
+  handleToMiddle();
+}
+
+function handlerDragMoveEvent (event) {
+  if (event.button === 0) {
+    const downX = event.pageX;
+    const downY = event.pageY;
+    let x = 0;
+    let y = 0;
+    const startX = svgcontent.parentElement.scrollLeft;
+    const startY = svgcontent.parentElement.scrollTop;
+    const move = (moveEvent) => {
+      x = moveEvent.pageX - downX;
+      y = moveEvent.pageY - downY;
+      svgcontent.parentElement.scrollLeft = startX - x;
+      svgcontent.parentElement.scrollTop = startY - y;
+    };
+    const end = () => {
+      document.removeEventListener('mousemove', move);
+      document.removeEventListener('mouseup', end);
+    };
+    document.addEventListener('mousemove', move);
+    document.addEventListener('mouseup', end);
   }
+}
+
+function handleToMiddle () {
+  const height = svgcontent.offsetHeight;
+  const width = svgcontent.offsetWidth;
+  const px = (width - svgcontent.parentElement.offsetWidth) / 2;
+  const ph = (height - svgcontent.parentElement.offsetHeight) / 2;
+  svgcontent.parentElement.scrollTo(px, ph);
+}
+
+function handleMagnify () {
+  if (zoom < 2) {
+    zoom += 0.1;
+    svgcontent.style.transform = `scale(${ zoom })`;
+  }
+  zoomTextEl.innerText = (zoom * 100).toFixed(0) + '%';
+}
+
+function handleMinify () {
+  if (zoom > 0.4) {
+    zoom -= 0.1;
+    svgcontent.style.transform = `scale(${ zoom })`;
+  }
+  zoomTextEl.innerText = (zoom * 100).toFixed(0) + '%';
 }
 </script>
 </body>

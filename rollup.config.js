@@ -6,7 +6,7 @@ import postcss from 'rollup-plugin-postcss';
 export default {
   input: 'src/index.ts',
   output: {
-    file: 'dist/code2mind.js',
+    file: 'dist/code2mind.min.js',
     name: 'Code2Mind',
     format: 'iife',
   },
