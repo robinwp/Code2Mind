@@ -1,8 +1,8 @@
-import Code2Mind from '../src/core/Code2Mind';
+import Code2MindParse from '../src/parse/Code2MindParse';
 
 describe('Code2Mind test', ()=>{
   test('Code2Mind parse', () => {
-    const result = Code2Mind.parse(`1
+    const result = Code2MindParse.parse(`1
 2
 
   2-1
@@ -91,7 +91,7 @@ describe('Code2Mind test', ()=>{
       }));
   });
   test('Code2Mind parse null', () => {
-    const result = Code2Mind.parse('');
+    const result = Code2MindParse.parse('');
     expect(result).toEqual(null);
   });
 });

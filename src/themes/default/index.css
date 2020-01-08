@@ -1,0 +1,30 @@
+.code2mind-main {
+  position: absolute;
+  padding: 10px 50px;
+  line-height: 22px;
+  min-height: 40px;
+  color: #FFFFFF;
+  border-radius: 50%;
+  max-width: 300px;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  word-break: break-word;
+  text-align: left;
+  font-size: 14px;
+  background: #fa815e;
+  will-change: top, left;
+  box-sizing: border-box;
+  margin: 0 0;
+}
+
+.code2mind-main-item {
+  border-radius: 4px;
+  padding: 10px 20px;
+}
+
+.code2mind-main-item2 {
+  background: transparent;
+  border-radius: 0;
+  color: #999999;
+  border-bottom: 2px solid #999999;
+}

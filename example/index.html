@@ -33,7 +33,9 @@
     }
 
     .content-warp {
-      position: fixed;
+      position: absolute;
+      top: 0;
+      left: 0;
       overflow: auto;
       height: 100%;
       background: #f2f2f2;
@@ -46,38 +48,8 @@
     }
 
     .svg-warp {
-      position: relative;
       width: 20000px;
       height: 20000px;
-
-    }
-
-    .code2mind-main {
-      position: absolute;
-      padding: 10px 50px;
-      line-height: 22px;
-      min-height: 40px;
-      color: #FFFFFF;
-      border-radius: 50%;
-      max-width: 300px;
-      word-wrap: break-word;
-      white-space: pre-wrap;
-      word-break: break-word;
-      text-align: left;
-      background: #fa815e;
-      will-change: top, left;
-    }
-
-    .code2mind-main-item {
-      border-radius: 4px;
-      padding: 10px 20px;
-    }
-
-    .code2mind-main-item2 {
-      background: transparent;
-      border-radius: 0;
-      color: #999999;
-      border-bottom: 2px solid #999999;
     }
   </style>
 </head>
@@ -86,21 +58,91 @@
   <textarea title="" id="text" placeholder="请输入"></textarea>
 </div>
 <div class="content-warp">
-  <div id="svgcontent" class="svg-warp">
-
-  </div>
+  <div id="svgcontent" class="svg-warp"></div>
 </div>
 <script src="../dist/code2mind.js"></script>
 <script>
 const text = document.getElementById('text');
 const svgcontent = document.getElementById('svgcontent');
-
-const config = {
-  heightSpac: 50,
-  widthSpac: 100,
-};
-
-handler(text.value);
+text.value = `哈佛学习法
+哈佛商学院的超级学习法
+\t模块学习
+\t\t模块学习回顾法的好处
+\t\t\t查缺补漏
+\t\t\t巩固知识、加深记忆
+\t\t\t知识系统化
+\t\t\t深化知识
+\t\t学习步骤
+\t\t\t看电影
+\t\t\t看课本
+\t\t\t写一篇回顾性文章
+\t\t\t经常翻看
+\t实践性模拟演练法
+\t\t情节设计环节
+\t\t组织实施环节
+\tSMART原则法
+\t\tS=specific具体的
+\t\tM=measurble可度量的
+\t\tR=relevant和执行者有关的
+\t\tT=time-blound有时间限制的
+\t案例教学法
+\t高强度课堂发言学习法
+\t提前学习法
+\t\t好处
+\t\t\t被动学习变主动学习
+\t\t\t有助于培养开放式思维，有助于培养包容的态度
+\t\t\t提前在脑中形成完整的知识体系
+\t\t\t把"补漏时间"保存自学时间
+\t\t\t有助于积累大量经验
+\t\tSQ3R法
+\t\t\tsurvey浏览，用时1分钟
+\t\t\tquestion发问，一边读一边提问
+\t\t\tread阅读
+\t\t\trecite复述
+\t\t\treview复习
+如何把时间花到重要的事情上
+\t未来视角给现在的自己定目标
+\t找到最重要的事
+\t\t四象限法则
+\t\t找到5-10个目标
+\t\t保留最多5个目标
+\t保留最多2个目标/年
+\t将目标拆分成可以每天执行的微习惯
+\t每天记录定期复盘
+读书法
+\t精读
+\t速读
+\t批注法
+\t读书笔记
+哈佛学生
+\t对自己要求高，不安于现状
+\t强大的目标感，清楚自己要什么
+\t不断努力、不断向上、不断督促自己
+三步精进法
+\t自励心
+\t\t短期榜样、长期榜样
+\t\t每天对自己说yes，告诉别人自己都可以，我也一定可以
+\t\t学会自知、自控、管理自己的情绪
+\t规划力
+\t\t分析现状、合理定目标
+\t\t\t内向
+\t\t\t\t你的学习能力（记忆力、理解力、观察力）
+\t\t\t\t你的学习心态
+\t\t\t\t你的学习方法
+\t\t\t外向
+\t\t\t\t工作方面
+\t\t分步规划
+\t\t\t即时
+\t\t\t\t每天、todolist
+\t\t\t近期
+\t\t\t\t以每周、每月为维度
+\t\t\t中长期
+\t\t\t\t半年、一年或者更长
+\t执行力
+\t\t番茄工作法
+\t\t与世隔绝法
+\t\t自我鼓励法
+\t\t同伴激励法`;
 text.addEventListener('blur', () => {
   handler(text.value);
 });
@@ -119,231 +161,23 @@ text.addEventListener('keyup', (e) => {
     currentEl.selectionEnd = startAt + 2;
   }
 });
+
 const height = svgcontent.offsetHeight;
 const width = svgcontent.offsetWidth;
 const px = (width - svgcontent.parentElement.offsetWidth) / 2;
 const ph = (height - svgcontent.parentElement.offsetHeight) / 2;
 svgcontent.parentElement.scrollTo(px, ph);
 
+const codemind = new Code2Mind({
+  el: '#svgcontent'
+});
+codemind.render(text.value);
+
 function handler (value) {
   if (value) {
-    const result = Code2Mind.parse(value);
-    svgcontent.innerHTML = '';
-    const cloneSvg = svgcontent.cloneNode(true);
-    cloneSvg.style.zIndex = '-9000';
-    cloneSvg.style.visibility = 'hidden';
-    document.body.appendChild(cloneSvg);
-    calcBound(cloneSvg, result);
-    document.body.removeChild(cloneSvg);
-    layout(result, width / 2 - result.bound.width / 2, height / 2 - result.bound.height / 2);
-    drawMind(svgcontent, result);
+    codemind.render(value);
   }
 }
-
-function drawMind (svgcontent, data) {
-  const div = document.createElement('div');
-  let className = 'code2mind-main';
-  if (data.level > 0) {
-    className += ' code2mind-main-item';
-  }
-  if (data.level > 1) {
-    className += ' code2mind-main-item2';
-  }
-  div.className = className;
-  div.innerText = data.title;
-  div.style.top = data.top + 'px';
-  div.style.left = data.left + 'px';
-  if (data.children.length) {
-    data.children.forEach((item) => {
-      drawMind(svgcontent, item);
-    });
-  }
-  svgcontent.appendChild(div);
-}
-
-function layout (data, x, y, isLeft) {
-  // let w = x + config.widthSpac + data.bound.width;
-  const len = data.children.length;
-  if (len) {
-    if (data.level === 0) {
-      let leftY = y + data.bound.height / 2 - data.bound.clientHeight.leftH / 2;
-      let rightY = y + data.bound.height / 2 - data.bound.clientHeight.rightH / 2;
-      data.children.forEach((item, idx) => {
-        if (item.isLeft) {
-          let w = x - config.widthSpac - item.bound.width;
-          leftY += idx / 2 === 0 ? 0 : (data.children[idx - 2].bound.clientHeight + config.heightSpac);
-          layout(item, w, leftY, true);
-        } else if (item.isRight) {
-          let w = x + config.widthSpac + data.bound.width;
-          rightY += (idx - 1) / 2 === 0 ? 0 : (data.children[idx - 2].bound.clientHeight + config.heightSpac);
-          layout(item, w, rightY);
-        }
-      });
-    } else {
-      let w = x + config.widthSpac + data.bound.width;
-      if (isLeft) {
-        w = x - config.widthSpac - data.bound.width;
-      }
-      let h = y + data.bound.height / 2 - data.bound.clientHeight / 2;
-      if (data.level === 1) {
-        h -= data.bound.height / 2;
-      }
-      data.children.forEach((item, idx) => {
-        h += (idx === 0 ? 0 : data.children[idx - 1].bound.clientHeight) + (idx === 0 ? 0 : config.heightSpac);
-        layout(item, w, h, isLeft);
-      });
-    }
-    // let h = y + data.bound.height / 2 - data.bound.clientHeight / 2;
-    // let leftY = y + data.bound.height / 2 - data.bound.clientHeight.leftH / 2;
-    // let rightY = y + data.bound.height / 2 - data.bound.clientHeight.rightH / 2;
-    // data.children.forEach((item, idx) => {
-    //   let w = currentW;
-    //   if (data.level === 0 && item.isLeft) {
-    //     w = x - config.widthSpac - item.bound.width;
-    //     leftY += (idx / 2 === 0 ? 0 : data.children[idx - 1].bound.clientHeight) + (idx / 2 === 0 ? 0 : config.heightSpac);
-    //     layout(item, w, leftY, true);
-    //   } else if (data.level === 0 && item.isRight) {
-    //     rightY += ((idx - 1) / 2 === 0 ? 0 : data.children[idx - 1].bound.clientHeight) + ((idx - 1) / 2 === 0 ? 0 : config.heightSpac);
-    //     layout(item, w, rightY);
-    //   } else if (isLeft) {
-    //     w = x - config.widthSpac - item.bound.width;
-    //     h += (idx === 0 ? 0 : data.children[idx - 1].bound.clientHeight) + (idx === 0 ? 0 : config.heightSpac);
-    //     layout(item, w, h, isLeft);
-    //   } else {
-    //     h += (idx === 0 ? 0 : data.children[idx - 1].bound.clientHeight) + (idx === 0 ? 0 : config.heightSpac);
-    //     layout(item, w, h);
-    //   }
-    // });
-  }
-  data.top = y;
-  data.left = x;
-
-}
-
-function calcBound (cloneSvg, data) {
-  const bound = {
-    clientWidth: 0,
-    clientHeight: 0,
-    width: 0,
-    height: 0,
-  };
-  const div = document.createElement('div');
-  let className = 'code2mind-main';
-  if (data.level > 0) {
-    className += ' code2mind-main-item';
-  }
-  if (data.level > 1) {
-    className += ' code2mind-main-item2';
-  }
-  div.className = className;
-
-  div.innerText = data.title;
-  // 计算宽度和高度
-  cloneSvg.appendChild(div);
-  bound.clientWidth = bound.width = div.offsetWidth;
-  bound.clientHeight = bound.height = div.offsetHeight;
-  const len = data.children.length;
-  if (len) {
-    let w = 0;
-    let h = 0;
-    let leftH = 0;
-    let rightH = 0;
-    let leftW = 0;
-    let rightW = 0;
-    data.children.forEach((item, index) => {
-      calcBound(cloneSvg, item);
-      if (data.level === 0) {
-        if (index % 2 === 0) {
-          item.isLeft = true;
-          leftH += item.bound.clientHeight + config.heightSpac;
-          leftW += item.bound.clientWidth;
-        } else {
-          item.isRight = true;
-          rightH += item.bound.clientHeight + config.heightSpac;
-          rightW += item.bound.clientWidth;
-        }
-      } else {
-        h += item.bound.clientHeight;
-        if (item.bound.clientWidth > w) {
-          w = item.bound.clientWidth;
-        }
-      }
-    });
-    if (data.level === 0) {
-      leftH = leftH - config.heightSpac;
-      leftH = (leftH > bound.clientHeight ? leftH : bound.clientHeight);
-      rightH = rightH - config.heightSpac;
-      rightH = (rightH > bound.clientHeight ? rightH : bound.clientHeight);
-      bound.clientHeight = {
-        leftH,
-        rightH,
-      };
-      bound.clientWidth = {
-        leftW,
-        rightW,
-        w: leftW + rightW + bound.clientWidth + config.widthSpac * 2,
-      };
-    } else {
-      h += (len - 1) * config.heightSpac;
-      h = (h > bound.clientHeight ? h : bound.clientHeight);
-      w += bound.clientWidth + config.widthSpac;
-      bound.clientWidth = w;
-      bound.clientHeight = h;
-    }
-  }
-  data.bound = bound;
-}
-
-
-function setAttrs (el, option) {
-  const keys = Object.keys(option);
-  keys.forEach((item) => {
-    el.setAttribute(item, option[item]);
-  });
-}
-
-function createdSvgEl (tag, option) {
-  const tagEl = document.createElementNS('http://www.w3.org/2000/svg', tag);
-  setAttrs(tagEl, option);
-  return tagEl;
-}
-
-//
-// list.forEach(({ x, y }) => {
-//   const circle = createdSvgEl('circle', {
-//     cx: x,
-//     cy: y,
-//     r: 10,
-//   });
-//   // const text = createdSvgEl('text', {
-//   //   x,
-//   //   y,
-//   // });
-//   // text.innerHTML = title;
-//   g.append(circle);
-// });
-// let start = { x: 0, y: 0 };
-// list.forEach(({ x, y }, index) => {
-//   if (index === 0) {
-//     start = {
-//       x, y,
-//     };
-//   } else {
-//     const d = `M ${start.x} ${start.y} Q 350 400 ${x} ${y}`;
-//     const path = createdSvgEl('path', {
-//       d,
-//       stroke: 'blue',
-//       'stroke-width': '5',
-//       fill: 'none',
-//     });
-//     svg.append(path);
-//   }
-// });
-//
-//
-// svg.append(g);
-// document.body.appendChild(svg);
 </script>
-
 </body>
 </html>

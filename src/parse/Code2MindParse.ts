@@ -1,17 +1,17 @@
 import {KeyWord} from './status.enum';
-import {Node} from './Node';
-import {Util} from './util';
+import {MindNode} from './MindNode';
+import {Util} from '../util';
 
-export default class Code2Mind {
-  public static parse(source: string = ''): Node {
+export default class Code2MindParse {
+  public static parse(source: string = ''): MindNode {
     if (source) {
       const lints = source.replace(/\r\n/g, '\n').split('\n');
-      const root = new Node(Util.getUUid());
+      const root = new MindNode(Util.getUUid());
       lints.forEach((item, index) => {
         if (index === 0) {
           root.title = item;
         } else {
-          Code2Mind.parseLine(item, root);
+          Code2MindParse.parseLine(item, root);
         }
       });
       return root;
@@ -19,7 +19,7 @@ export default class Code2Mind {
     return null;
   }
 
-  private static parseLine(lintSource: string = '', root: Node) {
+  private static parseLine(lintSource: string = '', root: MindNode) {
     if (!lintSource) {
       return;
     }
@@ -28,7 +28,7 @@ export default class Code2Mind {
       const last = root.children.length - 1;
       this.parseLine(result.token, root.children[last]);
     } else {
-      const node = new Node(Util.getUUid(), result.token, root.level + 1, root.uid);
+      const node = new MindNode(Util.getUUid(), result.token, root.level + 1, root.uid);
       root.children.push(node);
     }
   }

@@ -1,19 +1,23 @@
-// import { terser } from 'rollup-plugin-terser';
+import { terser } from 'rollup-plugin-terser';
 import babel from 'rollup-plugin-babel';
-import typescript from 'rollup-plugin-typescript'
+import typescript from 'rollup-plugin-typescript';
+import postcss from 'rollup-plugin-postcss';
 
 export default {
-  input: 'src/core/Code2Mind.ts',
+  input: 'src/index.ts',
   output: {
     file: 'dist/code2mind.js',
-    name:'Code2Mind',
-    format: 'umd'
+    name: 'Code2Mind',
+    format: 'iife',
   },
   plugins: [
+    postcss({
+      extensions: ['.css'],
+    }),
     typescript(),
     babel({
-      exclude: 'node_modules/**'
+      exclude: 'node_modules/**',
     }),
-    // terser()
-  ]
+    terser()
+  ],
 };
