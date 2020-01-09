@@ -1,11 +1,12 @@
 import Code2MindParse from '../parse/Code2MindParse';
 import {MindNode} from '../parse/MindNode';
 import '../themes/default/index.css';
+import {Util} from '../util';
 
-const setAttrs = (svg: SVGElement, attrs: Object) => {
+const setAttrs = (el: Element, attrs: Object) => {
   const keys = Object.keys(attrs);
   keys.forEach((item) => {
-    svg.setAttribute(item, attrs[item]);
+    el.setAttribute(item, attrs[item]);
   });
 };
 
@@ -32,6 +33,7 @@ const createdDiv = (node: MindNode): HTMLElement => {
 export class Code2Mind {
   config: Config;
   el: HTMLElement;
+  result: MindNode;
 
   constructor(options: Config) {
     this.config = Object.assign({
@@ -58,26 +60,127 @@ export class Code2Mind {
     this.el.style.position = 'relative';
   }
 
+  html2svg(width: number, height: number, x: number, y: number, node: Node): SVGElement {
+    const svg = createdSvgEl('svg', {
+      width,
+      height
+    });
+    const foreignObject = createdSvgEl('foreignObject', {
+      width: '100%',
+      height: '100%',
+      x,
+      y,
+      externalResourcesRequired: true
+    });
+    foreignObject.appendChild(node);
+    svg.appendChild(foreignObject);
+    return svg;
+  };
+
+  setCssStyle(node, zoom) {
+    if (node.children && node.children.length > 0) {
+      for (let i = 0, size = node.children.length; i < size; i++) {
+        this.setCssStyle(node.children.item(i), zoom);
+      }
+    }
+    const style = getComputedStyle(node, null);
+    node.style.cssText = style.cssText;
+    node.className = '';
+  }
+
+  svg2img(svg: SVGElement): Promise<HTMLImageElement> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      // btoa(unescape
+      img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(new XMLSerializer().serializeToString(svg))}`;
+    });
+  }
+
+  picture(zoom: number = 1, padding: number = 10) {
+    if (zoom <= 0) {
+      throw '缩放比例必须是大于0';
+    }
+    const node = document.getElementById('code2mindContent');
+    // const bound = node.getBoundingClientRect();
+    const cloneNode = node.cloneNode(true);
+    // @ts-ignore
+    setAttrs(cloneNode, {
+      style: `top:0;left:0;transform-origin:0 0;transform:scale(${zoom})`,
+    });
+    const width = this.result.bound.clientWidth * zoom + padding * 2;
+    const height = this.result.bound.clientHeight * zoom + padding * 2;
+    const svg = this.html2svg(width, height, padding, padding, cloneNode);
+    const div = document.createElement('div');
+    setAttrs(div, {
+      style: 'top:0;left:0;position:absolute;z-index:-555;width:0;height:0;overflow:hidden;'
+    });
+    div.appendChild(svg);
+    document.body.appendChild(div);
+    this.setCssStyle(cloneNode, zoom);
+
+    const code2mindSvg = document.getElementById('code2mindSvg').cloneNode(true);
+    // @ts-ignore
+    setAttrs(code2mindSvg, {
+      width,
+      height,
+      style: `transform-origin:0 0;transform:scale(${zoom})`
+    });
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = width;
+    canvas.height = height;
+    // @ts-ignore
+    this.svg2img(code2mindSvg).then((img2) => {
+      ctx.drawImage(img2, padding, padding);
+    }).then(() => {
+      return this.svg2img(svg);
+    }).then((img) => {
+      ctx.drawImage(img, 0, 0);
+      canvas.toBlob((blob) => {
+        Util.download(blob, null, null);
+      });
+    }).finally(() => {
+      document.body.removeChild(div);
+    });
+  }
+
   render(source: string = '') {
     this.el.innerHTML = '';
     const result = Code2MindParse.parse(source);
+    this.result = result;
     if (result) {
       const cloneSvg = this.el.cloneNode(true);
       // @ts-ignore
-      cloneSvg.style.zIndex = '-9000';
-      // @ts-ignore
-      cloneSvg.style.visibility = 'hidden';
+      setAttrs(cloneSvg, {
+        style: 'z-index: -9000;visibility:hidden;'
+      });
       document.body.appendChild(cloneSvg);
       this.calcBound(cloneSvg, result);
       document.body.removeChild(cloneSvg);
-      this.layout(result, this.config.width / 2 - result.bound.width / 2, this.config.height / 2 - result.bound.height / 2, false);
+      this.layout(result, result.bound.leftWidht > 0 ? (result.bound.leftWidht + this.config.widthSpac) : 0, (result.bound.height >= result.bound.clientHeight) ? 0 : (result.bound.clientHeight / 2), false);
+      const top = this.config.height / 2 - result.bound.clientHeight / 2;
+      const left = this.config.width / 2 - result.bound.clientWidth / 2;
       const svg = createdSvgEl('svg', {
-        style: 'position:absolute;left: 0;top: 0',
-        width: '100%',
-        height: '100%',
+        width: result.bound.clientWidth.toString(),
+        height: result.bound.clientHeight.toString(),
+        id: 'code2mindSvg',
       });
-      this.el.appendChild(svg);
-      this.drawMind(this.el, result, svg);
+      const div = document.createElement('div');
+      setAttrs(div, {
+        id: 'code2mindContent',
+        style: `top:${top}px;left:${left}px;position:relative;z-index:1;width:${result.bound.clientWidth}px;height:${result.bound.clientHeight}px;`
+      });
+      this.drawMind(div, result, svg);
+      this.el.appendChild(div);
+      const svgwarpdiv = document.createElement('div');
+      setAttrs(svgwarpdiv, {
+        style: `top:${top}px;left:${left}px;position:absolute;`
+      });
+      svgwarpdiv.appendChild(svg);
+      this.el.appendChild(svgwarpdiv);
     }
   }
 
@@ -175,11 +278,16 @@ export class Code2Mind {
           if (index % 2 === 0) {
             item.isLeft = true;
             leftH += item.bound.clientHeight + this.config.heightSpac;
-            leftW += item.bound.clientWidth;
+            if (item.bound.clientWidth > leftW) {
+              leftW = item.bound.clientWidth;
+            }
           } else {
             item.isRight = true;
             rightH += item.bound.clientHeight + this.config.heightSpac;
-            rightW += item.bound.clientWidth;
+            // rightW += item.bound.clientWidth;
+            if (item.bound.clientWidth > rightW) {
+              rightW = item.bound.clientWidth;
+            }
           }
         } else {
           h += item.bound.clientHeight;
@@ -197,7 +305,8 @@ export class Code2Mind {
         bound.rightHeight = rightH;
         bound.leftWidht = leftW;
         bound.rightWidth = rightW;
-        bound.clientWidth = leftW + rightW + bound.width + this.config.widthSpac * 2;
+        bound.clientHeight = Math.max(leftH, rightH);
+        bound.clientWidth = leftW + rightW + bound.width + this.config.widthSpac * (leftW === 0 ? 0 : (rightW === 0 ? 1 : 2));
       } else {
         h += (len - 1) * this.config.heightSpac;
         h = (h > bound.clientHeight ? h : bound.clientHeight);

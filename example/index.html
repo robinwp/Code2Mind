@@ -75,6 +75,7 @@
   <button onclick="handleMagnify()">放大</button>
   <span id="zoomText">100%</span>
   <button onclick="handleMinify()">缩小</button>
+  <button onclick="handlePicture()">打印</button>
 </div>
 <div onmousedown="handlerDragMoveEvent(event)" class="content-warp">
   <div id="svgcontent" class="svg-warp"></div>
@@ -85,6 +86,16 @@ const text = document.getElementById('text');
 const zoomTextEl = document.getElementById('zoomText');
 const svgcontent = document.getElementById('svgcontent');
 let timer = null;
+// text.value = '大厦快捷的等会撒即可的和';
+// text.value =`a
+// b
+//   b-1
+//     b3
+//       b5
+//       b6
+//     b4
+//   b-2
+// c`;
 text.value = `哈佛学习法
 哈佛商学院的超级学习法
 \t模块学习
@@ -93,6 +104,10 @@ text.value = `哈佛学习法
 \t\t\t巩固知识、加深记忆
 \t\t\t知识系统化
 \t\t\t深化知识
+\t\t\t\t深化知识
+\t\t\t\t深化知识
+\t\t\t\t深化知识
+\t\t\t\t深化知识
 \t\t学习步骤
 \t\t\t看电影
 \t\t\t看课本
@@ -247,6 +262,10 @@ function handleMinify () {
     svgcontent.style.transform = `scale(${ zoom })`;
   }
   zoomTextEl.innerText = (zoom * 100).toFixed(0) + '%';
+}
+
+function handlePicture () {
+  codemind.picture(2, 10);
 }
 </script>
 </body>

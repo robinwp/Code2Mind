@@ -5,14 +5,10 @@
   min-height: 40px;
   color: #FFFFFF;
   border-radius: 50%;
-  max-width: 300px;
-  word-wrap: break-word;
-  white-space: pre-wrap;
-  word-break: break-word;
+  white-space: nowrap;
   text-align: left;
   font-size: 14px;
   background: #fa815e;
-  will-change: top, left;
   box-sizing: border-box;
   margin: 0 0;
 }

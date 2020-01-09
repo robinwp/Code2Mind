@@ -9,9 +9,7 @@
   "private": true,
   "scripts": {
     "test": "jest test",
-    "build": "npm run test && rollup -c",
-    "build:cmjs": "tsc -p tsconfig.build.json",
-    "build:web": "browserify dist/index.js --standalone myLib -o dist/web/bundle.js"
+    "build": "npm run test && rollup -c"
   },
   "devDependencies": {
     "@babel/core": "^7.7.5",
