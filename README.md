@@ -2,11 +2,17 @@
 
 code2mind 是什么，它是能将按规定格式写好的文本，转换成思维导图的工具
 
-### example
 [demo](https://robinwp.github.io/blog/code2mind)
-```html
+```
+npm install code2mind 
+or 
+yarn add code2mind
+or
 <script src=dist/code2mind.min.js></script>
-<script>
+```
+
+### example
+```js
 const code2mind = new Code2Mind({
   themes: 'dea',
   heightSpac: 50,// 垂直间隔
@@ -24,7 +30,6 @@ code2mind.render(`主题\n副主题\n\t子主题1\n\t子主题2`);
 
 // 第一个参数是下载时的缩放比例， 第二个参数是下载的图片的边距
 code2mind.picture(1,10); 
-</script>
 ```
 
 ### feature
