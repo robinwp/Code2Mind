@@ -10,7 +10,7 @@ interface Config {
   heightSpac: number;// 垂直间隔
   widthSpac: number;// 水平间隔
   lineStyle: LineStyle; // 连接线样式
-  el: string; // 挂载的元素
+  el: string|HTMLElement; // 挂载的元素
   width: number;
   height: number;
 }

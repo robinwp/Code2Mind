@@ -49,7 +49,7 @@ export class Code2Mind {
       themes: 'default',
       el: '#code2mind',
     }, options);
-    this.el = document.querySelector(this.config.el);
+    this.el = typeof this.config.el === 'string' ? document.querySelector(this.config.el) : this.config.el;
     if (!options.width) {
       this.config.width = this.el.offsetWidth;
     }
