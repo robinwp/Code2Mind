@@ -1,3 +1,4 @@
+import { Bound } from "../global";
 export declare class MindNode {
     uid: string;
     title: string;

@@ -1,11 +1,11 @@
-interface LineStyle {
+export interface LineStyle {
   curvature: number; // 连接线曲度
   stroke: string; // 连接线颜色
   strokeWidth: number; // 连接线粗细
 }
 
 
-interface Config {
+export interface Config {
   themes: string;
   heightSpac: number;// 垂直间隔
   widthSpac: number;// 水平间隔
@@ -15,7 +15,7 @@ interface Config {
   height: number;
 }
 
-interface Bound {
+export interface Bound {
   width: number;
   height: number;
   clientHeight: number;

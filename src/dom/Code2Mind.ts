@@ -2,6 +2,7 @@ import Code2MindParse from '../parse/Code2MindParse';
 import {MindNode} from '../parse/MindNode';
 import '../themes/default/index.css';
 import {Util} from '../util';
+import {Config, Bound} from '../global';
 
 const setAttrs = (el: Element, attrs: Object) => {
   const keys = Object.keys(attrs);

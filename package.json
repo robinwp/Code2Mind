@@ -7,7 +7,7 @@
   "types": "dist/index.d.ts",
   "author": "robinwp <284595745@qq.com>",
   "license": "MIT",
-  "private": true,
+  "private": false,
   "scripts": {
     "test": "jest test",
     "build": "npm run test && rollup -c"
