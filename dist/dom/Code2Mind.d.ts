@@ -1,5 +1,6 @@
 import { MindNode } from '../parse/MindNode';
 import '../themes/default/index.css';
+import { Config } from '../global';
 export declare class Code2Mind {
     config: Config;
     el: HTMLElement;
